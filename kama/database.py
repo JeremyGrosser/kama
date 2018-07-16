@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-import MySQLdb
-import MySQLdb.cursors
+import pymysql
+import pymysql.cursors
 import threading
 import functools
 import uuid
@@ -60,10 +60,10 @@ def generate_uuid():
     return '%032X' % u
 
 
-class LoggingCursor(MySQLdb.cursors.Cursor):
+class LoggingCursor(pymysql.cursors.Cursor):
     def execute(self, query, args=None):
         log.debug('execute: %r %% %r', query, args)
-        return MySQLdb.cursors.Cursor.execute(self, query, args)
+        return pymysql.cursors.Cursor.execute(self, query, args)
 
 
 class DatabaseContext(object):
@@ -79,6 +79,8 @@ class DatabaseContext(object):
                     'user': kama.env.get(['MYSQL_SERVICE_USER'], 'kama'),
                     'db': kama.env.get(['MYSQL_SERVICE_DATABASE'], 'kama'),
                     'connect_timeout': int(kama.env.get(['MYSQL_CONNECT_TIMEOUT'], 5)),
+                    'charset': 'utf8mb4',
+                    'cursorclass': LoggingCursor,
                 }
                 log.debug('Connecting to database with params: %r', params)
 
@@ -86,15 +88,12 @@ class DatabaseContext(object):
                 if params['passwd'] is None:
                     del params['passwd']
 
-                self.database = MySQLdb.connect(**params)
+                self.database = pymysql.connect(**params)
 
-            cursor = self.database.cursor(cursorclass=LoggingCursor)
-            cursor.execute('SELECT VERSION()')
-            version = cursor.fetchall()[0][0]
-            log.debug('Connected to database %s' % version)
-            #cursor.execute('SET NAMES utf8mb4')
-            #cursor.execute('SET CHARACTER SET utf8mb4')
-            #cursor.execute('SET character_set_connection=utf8mb4')
+            cursor = self.database.cursor()
+            #cursor.execute('SELECT VERSION()')
+            #version = cursor.fetchall()[0][0]
+            #log.debug('Connected to database %s' % version)
             return cursor
         except Exception as e:
             log.warning('Database error: %s', str(e))

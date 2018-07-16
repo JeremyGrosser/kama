@@ -120,7 +120,6 @@ class TestDatabase(unittest.TestCase):
         test8 = kama.database.Entity.create('device', 'test8', self.root_role)
         self.assertEqual(repr(test7), 'Entity(%r, %r, %r)' % (test7.uuid, 'device', 'test7'))
         self.assertNotEqual(test7, test8)
-        self.assertNotEqual(cmp(test7, test8), 0)
 
     def test_not_found_exceptions(self):
         test9 = kama.database.Entity.create('device', 'test9', self.root_role)
@@ -155,7 +154,6 @@ class TestDatabase(unittest.TestCase):
         self.assertEqual(str(attribute), '%s %s=%s' % (attribute.entity(), attribute.key, attribute.value))
         self.assertEqual(repr(attribute), 'Attribute(%r, %r, %r, %r)' % (attribute.uuid, attribute.entity_uuid, attribute.key, attribute.value))
         self.assertNotEqual(attribute, test11)
-        self.assertNotEqual(cmp(attribute, test11), 0)
 
         self.assertEqual(attribute.entity(), test11)
 
@@ -176,7 +174,6 @@ class TestDatabase(unittest.TestCase):
         link2 = test13.add_link(test12, context=self.context)
 
         self.assertNotEqual(link1, link2)
-        self.assertNotEqual(cmp(link1, link2), 0)
         self.assertFalse(link1 == link2)
         self.assertEqual(str(link1), 'Link %s -> %s' % (link1.from_entity, link1.to_entity))
         self.assertEqual(repr(link1), 'Link(%r, %r, %r)' % (link1.uuid, link1.from_entity, link1.to_entity))
@@ -200,7 +197,6 @@ class TestDatabase(unittest.TestCase):
         p2 = test15.permissions(context=self.context)[0]
 
         self.assertNotEqual(p1, p2)
-        self.assertNotEqual(cmp(p1, p2), 0)
         self.assertEqual(str(p1), 'Permission %s has %s on %s' % (p1.role, p1.name, p1.entity))
         self.assertEqual(repr(p1), 'Permission(%r, %r, %r, %r)' % (p1.uuid, p1.role, p1.entity, p1.name))
 

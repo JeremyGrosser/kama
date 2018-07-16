@@ -1,6 +1,6 @@
-FROM alpine:3.6
+FROM alpine:3.8
 
-RUN apk add --no-cache python py-mysqldb py-pip libgcc
+RUN apk add --no-cache python3 py3-pip libgcc
 WORKDIR /kama
 COPY wheels .
-RUN pip install *.whl
+RUN pip3 install *.whl
