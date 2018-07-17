@@ -489,7 +489,10 @@ def main():
     setup_arguments(parser)
     
     args = parser.parse_args()
-    args.func(args)
+    if not hasattr(args, 'func'):
+        parser.print_help()
+    else:
+        args.func(args)
 
 
 if __name__ == '__main__':
