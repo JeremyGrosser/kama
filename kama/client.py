@@ -39,9 +39,9 @@ class KamaDatabaseClient(object):
     def __init__(self, args):
         log.debug(args)
         if args.ca_cert is not None:
-            root_pem = open(args.ca_cert, 'r').read()
-            client_private_pem = open(args.client_key, 'r').read()
-            client_public_pem = open(args.client_cert, 'r').read()
+            root_pem = open(args.ca_cert, 'rb').read()
+            client_private_pem = open(args.client_key, 'rb').read()
+            client_public_pem = open(args.client_cert, 'rb').read()
 
             creds = grpc.ssl_channel_credentials(root_pem, client_private_pem, client_public_pem)
             channel = grpc.secure_channel(args.server, creds)
