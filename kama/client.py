@@ -219,7 +219,7 @@ class KamaDatabaseClient(object):
         out = '''name:    {entity.name}
 kind:    {entity.kind}
 uuid:    {uuid}
-attributes:\n'''.format(entity=entity, uuid=entity.uuid.decode())
+attributes:\n'''.format(entity=entity, uuid=entity.uuid.hex().upper())
 
         for attribute in entity.attributes:
             out += '    {attribute.key} = {attribute.value}\n'.format(attribute=attribute)

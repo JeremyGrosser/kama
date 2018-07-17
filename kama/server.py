@@ -3,8 +3,8 @@ import argparse
 import itertools
 import functools
 import grpc
-from . import kama_pb2
-from . import kama_pb2_grpc
+from kama import kama_pb2
+from kama import kama_pb2_grpc
 from google.protobuf.empty_pb2 import Empty
 import time
 import os
@@ -213,6 +213,7 @@ def main():
     parser.add_argument('--server-cert', default=os.environ.get('KAMA_SERVER_CERT', 'server.cert'))
     parser.add_argument('--server-key', default=os.environ.get('KAMA_SERVER_KEY', 'server.key'))
     parser.add_argument('--ca-cert', default=os.environ.get('KAMA_CA_CERT', 'ca-cert.pem'))
+    parser.add_argument('--server-bind', default=os.environ.get('KAMA_BIND', '[::]:8443'))
     parser.set_defaults(func=main)
     args = parser.parse_args()
 
@@ -220,16 +221,16 @@ def main():
         kama.database.schema_init()
         return
 
-    server_cert = open(args.server_cert, 'r').read()
-    server_key = open(args.server_key, 'r').read()
-    root_cert = open(args.ca_cert, 'r').read()
+    server_cert = open(args.server_cert, 'rb').read()
+    server_key = open(args.server_key, 'rb').read()
+    root_cert = open(args.ca_cert, 'rb').read()
     creds = grpc.ssl_server_credentials([(server_key, server_cert)], root_cert, require_client_auth=True)
 
     servicer = DatabaseServicer()
 
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=100))
     kama_pb2_grpc.add_KamaDatabaseServicer_to_server(servicer, server)
-    server.add_secure_port('[::]:8443', creds)
+    server.add_secure_port(args.server_bind, creds)
     server.start()
 
     try:
@@ -237,3 +238,7 @@ def main():
             time.sleep(60)
     except KeyboardInterrupt:
         server.stop(0)
+
+
+if __name__ == '__main__':
+    main()

@@ -7,7 +7,7 @@ class AuthenticationException(Exception):
 
 def name_from_grpc_context(grpc_context):
     cname = grpc_context.peer_identities()[0]
-    cname = cname.split('.')
+    cname = cname.split(b'.')
     name, kind = cname[:2]
 
     return (kind, name)
