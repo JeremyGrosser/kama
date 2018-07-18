@@ -53,7 +53,7 @@ def generate_uuid():
     version = 15    # definitely out of spec.
     u = uuid.uuid1()
     u = (version << 122) | (u.node << 74) | (u.time << 14) | u.clock_seq
-    return u.to_bytes(16, 'little')
+    return u.to_bytes(16, 'big')
 
 
 class LoggingCursor(pymysql.cursors.Cursor):
