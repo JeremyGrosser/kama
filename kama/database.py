@@ -368,7 +368,6 @@ class Entity(object):
             for link_uuid, to_uuid, to_entity_kind, to_entity_name in cursor:
                 link_uuid = bytes.fromhex(link_uuid)
                 to_uuid = bytes.fromhex(to_uuid)
-                print('link_uuid=', repr(link_uuid))
                 to_entity = Entity(to_uuid, to_entity_kind, to_entity_name)
                 link = Link(link_uuid, self, to_entity)
                 links.append(link)
