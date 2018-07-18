@@ -10,6 +10,7 @@ import kama.log
 
 import collections
 import argparse
+import sys
 
 
 log = kama.log.get_logger('kama.client')
@@ -146,8 +147,8 @@ class KamaDatabaseClient(object):
         '''
         attribute = kama_pb2.Attribute()
         attribute.entity.uuid = entity_uuid
-        attribute.key = key
-        attribute.value = value
+        attribute.key = bytes(key, 'utf8')
+        attribute.value = bytes(value, 'utf8')
         return self.stub.AddAttribute(attribute)
 
     def delete_attributes(self, entity_uuid, key):
@@ -284,7 +285,7 @@ def attribute_list(args):
         attributes = entity.attributes
 
     for attribute in attributes:
-        print('%s=%s' % (attribute.key, attribute.value.encode('utf-8')))
+        print('%s=%s' % (attribute.key, attribute.value.decode('utf8')))
 
 
 def link_add(args):
@@ -328,6 +329,10 @@ def _traverse_links(client, entity, parents=False, children=False, recursive=Fal
 def link_get(args):
     client = KamaDatabaseClient(args)
     entity = client.get_entity(args.entity_kind, args.entity_name)
+
+    if not args.parents and not args.children:
+        print('kama link get: Please specify --parents and/or --children', file=sys.stderr)
+        return
 
     for result in _traverse_links(client, entity, args.parents, args.children, args.recursive):
         print('%s %s' % (result.kind, result.name))
