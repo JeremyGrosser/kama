@@ -18,7 +18,6 @@ CACHE_TTL = 60.0
 
 log = kama.log.get_logger('kama.database')
 audit_log = kama.log.get_logger('kama.audit')
-tlocal = threading.local()
 
 
 class KamaException(Exception):
@@ -117,6 +116,7 @@ class DatabaseContext(object):
 
 
 def get_database_context():
+    tlocal = threading.local()
     if not hasattr(tlocal, 'database_context'):
         tlocal.database_context = DatabaseContext()
     return tlocal.database_context
